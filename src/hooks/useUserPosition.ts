@@ -44,9 +44,9 @@ export const useUserPosition = (): UseUserPositionReturnType => {
   // Event listeners for contract events to update user position
   // useWatchAnchorEngineDepositEtherEvent({
   //   address: anchorEngineAddress,
-  //   args: {
-  //     onBehalfOf: address as Address,
-  //   },
+    // args: {
+    //   onBehalfOf: address as Address,
+    // },
   //   onLogs() {
   //     console.log("Deposit event triggered");
   //     fetchUserPosition();

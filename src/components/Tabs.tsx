@@ -44,7 +44,7 @@ export const Tabs = ({
           containerClassName
         )}
       >
-        <div className="border border-secondary p-1 rounded-full">
+        <div className="border border-accent p-1 rounded-full">
           {propTabs.map((tab, idx) => (
             <button
               key={tab.title}
@@ -66,13 +66,13 @@ export const Tabs = ({
                   layoutId="clickedbutton"
                   transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
                   className={cn(
-                    "absolute inset-0 bg-secondary rounded-full ",
+                    "absolute inset-0 bg-accent rounded-full ",
                     activeTabClassName
                   )}
                 />
               )}
 
-              <span className="relative block text-white">
+              <span className={`relative block ${active.value === tab.value ? "text-primary" : "text-accent"}`}>
                 {tab.title}
               </span>
             </button>

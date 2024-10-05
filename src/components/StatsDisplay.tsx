@@ -15,7 +15,7 @@ interface StatsDisplayProps {
 
 const StatsDisplay: React.FC<StatsDisplayProps> = ({ stats }) => {
   return (
-    <div className="h-2/6 p-0.5">
+    <div className="h-2/6">
       <div className="bg-primary text-center w-full py-0.5 font-semibold text-md text-accent">
         Stats
       </div>

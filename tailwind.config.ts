@@ -16,11 +16,17 @@ export default {
         sans: ["Poppins", "sans-serif"],
       },
       colors: {
-        primary: "#000035",
-        secondary: "#36454F", 
-        accent: colors.gray[300]
+        primary: "#05081c",
+        secondary: "#404258", 
+        accent: colors.gray[300],
+        navy: "#000035"
       },
     },
+    backgroundImage: {
+      'radial-gradient': 'radial-gradient(circle, #000035 20%, #05081c 80%)',
+    },
+    // prim: 98DED9, 2E5A88, 001F3F, 0B192C,  	#000000, 000035
+    // sec: 508C9B, 36454F
   },
   plugins: [
     addVariablesForColors,
