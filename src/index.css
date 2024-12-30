@@ -3,5 +3,15 @@
 @tailwind utilities;
 
 body {
-    @apply bg-radial-gradient;
+  @apply bg-radial-gradient;
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  overflow: auto;
+  height: 100%;
 }

@@ -17,9 +17,10 @@ export default {
       },
       colors: {
         primary: "#05081c",
-        secondary: "#404258", 
-        accent: colors.gray[300],
-        navy: "#000035"
+        secondary: "#1C243E", 
+        accent: colors.blue[300],//"#508C9B",//colors.gray[300],
+        navy: "#000035",
+        lightBlue: "#34B2EB"
       },
     },
     backgroundImage: {

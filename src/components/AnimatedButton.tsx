@@ -19,7 +19,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({ onClick, children, isDi
       onClick={onClick}
       disabled={isDisabled}
     >
-      <div className="px-8 py-2 bg-primary rounded-lg relative group transition duration-200 text-accent font-medium">
+      <div className="px-8 py-2 bg-lightBlue rounded-lg relative group transition duration-200 text-primary font-semibold">
         {isDisabled ? <Loader /> : children}
       </div>
     </motion.button>

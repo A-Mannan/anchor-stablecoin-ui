@@ -1,24 +1,24 @@
 import { useCallback } from "react";
-import { useWriteAnchorEngineBurn } from "../abis";
+import { useWriteAnchorEngineRepay } from "../abis";
 import { useContractAddress } from "./useContractAddress";
 import { useAccount } from "wagmi";
 import { waitForTransactionReceipt } from "@wagmi/core";
 import { config } from "../wagmi";
 import type { Address } from "viem";
 
-interface UseBurnReturnType {
-  burn: (repayAmount: bigint) => Promise<void>;
+interface UseRepayReturnType {
+  repay: (repayAmount: bigint) => Promise<void>;
 }
 
-export const useBurn = (): UseBurnReturnType => {
+export const useRepay = (): UseRepayReturnType => {
   const { anchorEngineAddress } = useContractAddress();
   const { address } = useAccount();
 
-  const { writeContractAsync: writeBurn } = useWriteAnchorEngineBurn({});
+  const { writeContractAsync: writeRepay } = useWriteAnchorEngineRepay({});
 
-  const burn = useCallback(
+  const repay = useCallback(
     async (repayAmount: bigint) => {
-      const txHash = await writeBurn({
+      const txHash = await writeRepay({
         address: anchorEngineAddress,
         args: [address as Address, repayAmount],
       });
@@ -32,6 +32,6 @@ export const useBurn = (): UseBurnReturnType => {
   );
 
   return {
-    burn,
+    repay,
   };
 };

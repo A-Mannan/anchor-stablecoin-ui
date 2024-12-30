@@ -38,7 +38,7 @@ const Position: React.FC<{}> = () => {
       title: "Redeem",
       value: "redeem",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-3xl p-10">
+        <div className="w-full overflow-hidden relative h-full rounded-3xl">
           <RedeemTab />
         </div>
       ),

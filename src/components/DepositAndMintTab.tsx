@@ -164,7 +164,7 @@ const DepositAndMintTab: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-end h-full">
+    <div className="flex flex-col justify-between h-full">
       <div className="flex flex-col justify-around gap-5 h-4/6 m-5 p-5">
         <LabeledNumberInput
           value={depositAmount}
@@ -181,16 +181,14 @@ const DepositAndMintTab: React.FC = () => {
           isDisabled={isExecuting}
         />
 
-        {error && (
-          <div
-            className="p-4 text-sm rounded-lg bg-gray-800 text-red-500"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
+        <div
+          className={`p-4 text-xs rounded-lg bg-primary border border-red-500 text-red-500 h-8 w-11/12 mx-auto flex items-center justify-center ${error ? "" : "invisible"}`}
+          role="alert"
+        >
+          {error}
+        </div>
 
-        <div className="flex mt-auto">
+        <div className="flex">
           <AnimatedButton
             onClick={handleMintAndDeposit}
             isDisabled={isExecuting}

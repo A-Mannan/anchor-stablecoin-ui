@@ -35,14 +35,14 @@ const LabeledNumberInput: React.FC<LabeledNumberInputProps> = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative sm:w-11/12 mx-auto">
       <input
         type="text"
         id={id}
         value={value}
         onChange={handleChange}
         disabled={isDisabled}
-        className="block px-2.5 pb-2.5 pt-4 w-full text-sm bg-transparent rounded-lg border appearance-none border-accent focus:border-primary text-accent focus:outline-none focus:ring-0 peer"
+        className="block px-2.5 pb-2.5 pt-4 w-full text-sm bg-transparent rounded-lg border appearance-none border-accent focus:border-accent text-accent focus:outline-none focus:ring-0 peer mx-auto"
         placeholder=""
       />
       {/* <span className="absolute right-2 top-2 text-gray-400 text-xs">
@@ -56,7 +56,7 @@ const LabeledNumberInput: React.FC<LabeledNumberInputProps> = ({
       </button> */}
       <label
         htmlFor={id}
-        className="absolute text-sm text-accent bg-secondary duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-focus:text-gray-500 peer-focus:bg-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:-translate-x-1/4 rtl:peer-focus:left-auto start-1"
+        className="absolute text-sm text-accent bg-secondary duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary peer-focus:bg-accent peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:-translate-x-1/4 rtl:peer-focus:left-auto start-2.5"
       >
         {description}
       </label>

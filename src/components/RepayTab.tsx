@@ -3,7 +3,7 @@ import LabeledNumberInput from "./LabeledNumberInput";
 import AnimatedButton from "./AnimatedButton";
 import { useEthPriceInUsd } from "../hooks/useEthPriceInUsd";
 import { useUserPosition } from "../hooks/useUserPosition";
-import { useBurn } from "../hooks/useBurn";
+import { useRepay } from "../hooks/useRepay";
 import { useUserBalance } from "../hooks/useUserBalance";
 import {
   calculateCollateralRatio,
@@ -25,7 +25,7 @@ const RepayTab: React.FC<{}> = () => {
   const { debtAmount, collateralAmount, fetchUserPosition } = useUserPosition();
   const { anchorUsdBalance, fetchAnchorUsdBalance } = useUserBalance();
 
-  const { burn } = useBurn();
+  const { repay } = useRepay();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +61,7 @@ const RepayTab: React.FC<{}> = () => {
     const repayAmountInUnits = parseUnits(debouncedRepayAmount || "0", 18);
 
     if (!repayAmountInUnits) {
-      setError("Withdraw amount cannot be zero.");
+      setError("Repay amount cannot be zero.");
       return;
     }
 
@@ -72,7 +72,7 @@ const RepayTab: React.FC<{}> = () => {
 
     fetchAnchorUsdBalance();
 
-    console.log("anchor usd balance", anchorUsdBalance)
+    console.log("anchor usd balance", anchorUsdBalance);
 
     if ((anchorUsdBalance as bigint) < repayAmountInUnits) {
       setError("Insufficient AnchorUSD Balance");
@@ -81,7 +81,7 @@ const RepayTab: React.FC<{}> = () => {
 
     setIsExecuting(true);
     try {
-      await burn(repayAmountInUnits);
+      await repay(repayAmountInUnits);
       await fetchUserPosition();
       toast.success("Repay successful", {
         position: "top-center",
@@ -136,15 +136,13 @@ const RepayTab: React.FC<{}> = () => {
           id="repay"
           isDisabled={isExecuting}
         />
-        {error && (
-          <div
-            className="p-4 text-sm rounded-lg bg-gray-800 text-red-500"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
-        <div className="flex mt-auto">
+        <div
+          className={`p-4 text-xs rounded-lg bg-primary border border-red-500 text-red-500 h-8 w-11/12 mx-auto flex items-center justify-center ${error ? "" : "invisible"}`}
+          role="alert"
+        >
+          {error}
+        </div>
+        <div className="flex">
           <AnimatedButton onClick={handleRepay} isDisabled={isExecuting}>
             Repay
           </AnimatedButton>

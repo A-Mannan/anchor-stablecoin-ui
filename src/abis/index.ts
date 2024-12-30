@@ -13,11 +13,47 @@ export const anchorEngineAbi = [
   {
     type: 'constructor',
     inputs: [
-      { name: 'stETHAddress', internalType: 'address', type: 'address' },
-      { name: 'priceFeedAddress', internalType: 'address', type: 'address' },
+      { name: '_stETHAddress', internalType: 'address', type: 'address' },
+      { name: '_priceFeedAddress', internalType: 'address', type: 'address' },
       { name: '_anchorUSDAddress', internalType: 'address', type: 'address' },
+      { name: '_minCollateralRatio', internalType: 'uint256', type: 'uint256' },
     ],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'INITIAL_MIN_DEPOSIT_AMOUNT',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'MAX_FEE_SHARE_BPS',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'MAX_KEEPERS_RATE',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'MAX_REDEMPTION_FEE_RATE',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'MIN_COLL_RATIO_FLOOR',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -30,25 +66,29 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'badCollateralRatio',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'becomeRedemptionProvider',
+    inputs: [{ name: 'stETHAmount', internalType: 'uint256', type: 'uint256' }],
+    name: 'auctionExcessYield',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [
-      { name: 'onBehalfOf', internalType: 'address', type: 'address' },
+      { name: 'providers', internalType: 'address[]', type: 'address[]' },
       { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'minEtherAmount', internalType: 'uint256', type: 'uint256' },
     ],
-    name: 'burn',
+    name: 'batchRedeemCollateral',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_feeRate', internalType: 'uint256', type: 'uint256' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'becomeRedemptionProvider',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -75,21 +115,8 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
-    inputs: [
-      {
-        name: 'payAmountInAnchorUSD',
-        internalType: 'uint256',
-        type: 'uint256',
-      },
-    ],
-    name: 'excessIncomeDistribution',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
-    name: 'feeStored',
+    name: 'feeShareBps',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -125,6 +152,13 @@ export const anchorEngineAbi = [
     type: 'function',
     inputs: [],
     name: 'getBorrowersCount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getDutchAuctionDiscountPrice',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -173,7 +207,7 @@ export const anchorEngineAbi = [
   {
     type: 'function',
     inputs: [],
-    name: 'lastReportTime',
+    name: 'lidoRebaseTime',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -182,11 +216,18 @@ export const anchorEngineAbi = [
     inputs: [
       { name: 'provider', internalType: 'address', type: 'address' },
       { name: 'onBehalfOf', internalType: 'address', type: 'address' },
-      { name: 'etherAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'debtToOffset', internalType: 'uint256', type: 'uint256' },
     ],
-    name: 'liquidation',
+    name: 'liquidatePosition',
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'minCollateralRatio',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -200,16 +241,10 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'mintFeeApy',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     inputs: [
       { name: 'provider', internalType: 'address', type: 'address' },
       { name: 'anchorUSDAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'minEtherAmount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'redeemCollateral',
     outputs: [],
@@ -218,17 +253,13 @@ export const anchorEngineAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'anchorUSDAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'redemptionProvider', internalType: 'address', type: 'address' },
     ],
-    name: 'redeemFromAllProviders',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'redemptionFee',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'redemptionOffers',
+    outputs: [
+      { name: 'feeRate', internalType: 'uint256', type: 'uint256' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -240,15 +271,20 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
-    inputs: [],
-    name: 'safeCollateralRatio',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
+    inputs: [
+      { name: 'onBehalfOf', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'repay',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [{ name: 'newApy', internalType: 'uint256', type: 'uint256' }],
-    name: 'setBorrowApy',
+    inputs: [
+      { name: 'newFeeShareBps', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'setFeeShare',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -268,26 +304,15 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'newFee', internalType: 'uint8', type: 'uint8' }],
-    name: 'setRedemptionFee',
+    inputs: [{ name: '_time', internalType: 'uint256', type: 'uint256' }],
+    name: 'setLidoRebaseTime',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
     inputs: [{ name: 'newRatio', internalType: 'uint256', type: 'uint256' }],
-    name: 'setSafeCollateralRatio',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'provider', internalType: 'address', type: 'address' },
-      { name: 'onBehalfOf', internalType: 'address', type: 'address' },
-      { name: 'etherAmount', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'superLiquidation',
+    name: 'setMinCollateralRatio',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -330,13 +355,31 @@ export const anchorEngineAbi = [
     anonymous: false,
     inputs: [
       {
-        name: 'newApy',
+        name: 'caller',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'anchorUSDAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'etherAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'timestamp',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
       },
     ],
-    name: 'BorrowApyChanged',
+    name: 'BatchRedeemedCollateral',
   },
   {
     type: 'event',
@@ -405,6 +448,44 @@ export const anchorEngineAbi = [
     anonymous: false,
     inputs: [
       {
+        name: 'feeAddress',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'feeAmount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'timestamp',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'FeeDistribution',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'newFeeShareBps',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'FeeShareChanged',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
         name: 'newGovernance',
         internalType: 'address',
         type: 'address',
@@ -437,7 +518,13 @@ export const anchorEngineAbi = [
         indexed: false,
       },
       {
-        name: 'payoutAnchorUSD',
+        name: 'payoutEUSD',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'discountRate',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
@@ -449,7 +536,7 @@ export const anchorEngineAbi = [
         indexed: false,
       },
     ],
-    name: 'LSDistribution',
+    name: 'LSDValueCaptured',
   },
   {
     type: 'event',
@@ -492,12 +579,6 @@ export const anchorEngineAbi = [
         indexed: false,
       },
       {
-        name: 'superLiquidation',
-        internalType: 'bool',
-        type: 'bool',
-        indexed: false,
-      },
-      {
         name: 'timestamp',
         internalType: 'uint256',
         type: 'uint256',
@@ -505,6 +586,19 @@ export const anchorEngineAbi = [
       },
     ],
     name: 'LiquidationRecord',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'newRatio',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'MinCollateralRatioChanged',
   },
   {
     type: 'event',
@@ -591,28 +685,29 @@ export const anchorEngineAbi = [
     type: 'event',
     anonymous: false,
     inputs: [
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
       {
-        name: 'user',
-        internalType: 'address',
-        type: 'address',
+        name: 'feeRate',
+        internalType: 'uint256',
+        type: 'uint256',
         indexed: false,
       },
-      { name: 'status', internalType: 'bool', type: 'bool', indexed: false },
-    ],
-    name: 'RedemptionProvider',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
       {
-        name: 'newRatio',
+        name: 'amount',
         internalType: 'uint256',
         type: 'uint256',
         indexed: false,
       },
     ],
-    name: 'SafeCollateralRatioChanged',
+    name: 'RedemptionProviderRegistered',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'RedemptionProviderRemoved',
   },
   {
     type: 'event',
@@ -645,6 +740,72 @@ export const anchorEngineAbi = [
     ],
     name: 'WithdrawEther',
   },
+  { type: 'error', inputs: [], name: 'AnchorEngine__AddressCannotBeZero' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__AmountCannotBeZero' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__AmountExceedsOffer' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__BorrowApyExceedsLimit' },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__CollateralRatioAboveMinCollateralRatio',
+  },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__DepositBelowInitialMinDeposit',
+  },
+  { type: 'error', inputs: [], name: 'AnchorEngine__ExceedsCollateralLimit' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__ExcessIncomeTooHigh' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__IndexOutOfBoundError' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__InsufficientAllowance' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__InsufficientBalance' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__LiquidationAmountTooHigh' },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__LiquidationCollateralRateTooHigh',
+  },
+  { type: 'error', inputs: [], name: 'AnchorEngine__MaxKeeperRateExceeded' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__MaxRedemptionFeeExceeded' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__MinCollateralRatioTooLow' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__NoExcessIncome' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__NoRedemptionProviders' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__NotRedemptionProvider' },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__ProviderCollateralRatioTooLow',
+  },
+  { type: 'error', inputs: [], name: 'AnchorEngine__ProviderDebtTooLow' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__ProviderInsufficientDebt' },
+  { type: 'error', inputs: [], name: 'AnchorEngine__ProviderNotAuthorized' },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__RedemptionProviderNotAuthorized',
+  },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__RepaymentExceedsRedemptionCommitment',
+  },
+  { type: 'error', inputs: [], name: 'AnchorEngine__SlippageExceeded' },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__SuperLiquidationAmountTooHigh',
+  },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__SuperLiquidationBorrowerCollateralRatioTooHigh',
+  },
+  {
+    type: 'error',
+    inputs: [],
+    name: 'AnchorEngine__SuperLiquidationOverallCollateralRatioTooHigh',
+  },
+  { type: 'error', inputs: [], name: 'AnchorEngine__TransferFailed' },
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1110,6 +1271,51 @@ export const useReadAnchorEngine = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"INITIAL_MIN_DEPOSIT_AMOUNT"`
+ */
+export const useReadAnchorEngineInitialMinDepositAmount =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'INITIAL_MIN_DEPOSIT_AMOUNT',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"MAX_FEE_SHARE_BPS"`
+ */
+export const useReadAnchorEngineMaxFeeShareBps =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'MAX_FEE_SHARE_BPS',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"MAX_KEEPERS_RATE"`
+ */
+export const useReadAnchorEngineMaxKeepersRate =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'MAX_KEEPERS_RATE',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"MAX_REDEMPTION_FEE_RATE"`
+ */
+export const useReadAnchorEngineMaxRedemptionFeeRate =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'MAX_REDEMPTION_FEE_RATE',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"MIN_COLL_RATIO_FLOOR"`
+ */
+export const useReadAnchorEngineMinCollRatioFloor =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'MIN_COLL_RATIO_FLOOR',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"anchorUSD"`
  */
 export const useReadAnchorEngineAnchorUsd = /*#__PURE__*/ createUseReadContract(
@@ -1117,20 +1323,13 @@ export const useReadAnchorEngineAnchorUsd = /*#__PURE__*/ createUseReadContract(
 )
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"badCollateralRatio"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"feeShareBps"`
  */
-export const useReadAnchorEngineBadCollateralRatio =
+export const useReadAnchorEngineFeeShareBps =
   /*#__PURE__*/ createUseReadContract({
     abi: anchorEngineAbi,
-    functionName: 'badCollateralRatio',
+    functionName: 'feeShareBps',
   })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"feeStored"`
- */
-export const useReadAnchorEngineFeeStored = /*#__PURE__*/ createUseReadContract(
-  { abi: anchorEngineAbi, functionName: 'feeStored' },
-)
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"fetchEthPriceInUsd"`
@@ -1175,6 +1374,15 @@ export const useReadAnchorEngineGetBorrowersCount =
   /*#__PURE__*/ createUseReadContract({
     abi: anchorEngineAbi,
     functionName: 'getBorrowersCount',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"getDutchAuctionDiscountPrice"`
+ */
+export const useReadAnchorEngineGetDutchAuctionDiscountPrice =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'getDutchAuctionDiscountPrice',
   })
 
 /**
@@ -1232,39 +1440,30 @@ export const useReadAnchorEngineKeeperRate =
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"lastReportTime"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"lidoRebaseTime"`
  */
-export const useReadAnchorEngineLastReportTime =
+export const useReadAnchorEngineLidoRebaseTime =
   /*#__PURE__*/ createUseReadContract({
     abi: anchorEngineAbi,
-    functionName: 'lastReportTime',
+    functionName: 'lidoRebaseTime',
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"mintFeeApy"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"minCollateralRatio"`
  */
-export const useReadAnchorEngineMintFeeApy =
+export const useReadAnchorEngineMinCollateralRatio =
   /*#__PURE__*/ createUseReadContract({
     abi: anchorEngineAbi,
-    functionName: 'mintFeeApy',
+    functionName: 'minCollateralRatio',
   })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"redemptionFee"`
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"redemptionOffers"`
  */
-export const useReadAnchorEngineRedemptionFee =
+export const useReadAnchorEngineRedemptionOffers =
   /*#__PURE__*/ createUseReadContract({
     abi: anchorEngineAbi,
-    functionName: 'redemptionFee',
-  })
-
-/**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"safeCollateralRatio"`
- */
-export const useReadAnchorEngineSafeCollateralRatio =
-  /*#__PURE__*/ createUseReadContract({
-    abi: anchorEngineAbi,
-    functionName: 'safeCollateralRatio',
+    functionName: 'redemptionOffers',
   })
 
 /**
@@ -1302,6 +1501,24 @@ export const useWriteAnchorEngine = /*#__PURE__*/ createUseWriteContract({
 })
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"auctionExcessYield"`
+ */
+export const useWriteAnchorEngineAuctionExcessYield =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: anchorEngineAbi,
+    functionName: 'auctionExcessYield',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"batchRedeemCollateral"`
+ */
+export const useWriteAnchorEngineBatchRedeemCollateral =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: anchorEngineAbi,
+    functionName: 'batchRedeemCollateral',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"becomeRedemptionProvider"`
  */
 export const useWriteAnchorEngineBecomeRedemptionProvider =
@@ -1309,14 +1526,6 @@ export const useWriteAnchorEngineBecomeRedemptionProvider =
     abi: anchorEngineAbi,
     functionName: 'becomeRedemptionProvider',
   })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"burn"`
- */
-export const useWriteAnchorEngineBurn = /*#__PURE__*/ createUseWriteContract({
-  abi: anchorEngineAbi,
-  functionName: 'burn',
-})
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"depositEtherToMint"`
@@ -1337,21 +1546,12 @@ export const useWriteAnchorEngineDepositStEthToMint =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"excessIncomeDistribution"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"liquidatePosition"`
  */
-export const useWriteAnchorEngineExcessIncomeDistribution =
+export const useWriteAnchorEngineLiquidatePosition =
   /*#__PURE__*/ createUseWriteContract({
     abi: anchorEngineAbi,
-    functionName: 'excessIncomeDistribution',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"liquidation"`
- */
-export const useWriteAnchorEngineLiquidation =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: anchorEngineAbi,
-    functionName: 'liquidation',
+    functionName: 'liquidatePosition',
   })
 
 /**
@@ -1372,15 +1572,6 @@ export const useWriteAnchorEngineRedeemCollateral =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"redeemFromAllProviders"`
- */
-export const useWriteAnchorEngineRedeemFromAllProviders =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: anchorEngineAbi,
-    functionName: 'redeemFromAllProviders',
-  })
-
-/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"removeRedemptionProvider"`
  */
 export const useWriteAnchorEngineRemoveRedemptionProvider =
@@ -1390,12 +1581,20 @@ export const useWriteAnchorEngineRemoveRedemptionProvider =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setBorrowApy"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"repay"`
  */
-export const useWriteAnchorEngineSetBorrowApy =
+export const useWriteAnchorEngineRepay = /*#__PURE__*/ createUseWriteContract({
+  abi: anchorEngineAbi,
+  functionName: 'repay',
+})
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setFeeShare"`
+ */
+export const useWriteAnchorEngineSetFeeShare =
   /*#__PURE__*/ createUseWriteContract({
     abi: anchorEngineAbi,
-    functionName: 'setBorrowApy',
+    functionName: 'setFeeShare',
   })
 
 /**
@@ -1417,30 +1616,21 @@ export const useWriteAnchorEngineSetKeeperRate =
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setRedemptionFee"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setLidoRebaseTime"`
  */
-export const useWriteAnchorEngineSetRedemptionFee =
+export const useWriteAnchorEngineSetLidoRebaseTime =
   /*#__PURE__*/ createUseWriteContract({
     abi: anchorEngineAbi,
-    functionName: 'setRedemptionFee',
+    functionName: 'setLidoRebaseTime',
   })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setSafeCollateralRatio"`
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setMinCollateralRatio"`
  */
-export const useWriteAnchorEngineSetSafeCollateralRatio =
+export const useWriteAnchorEngineSetMinCollateralRatio =
   /*#__PURE__*/ createUseWriteContract({
     abi: anchorEngineAbi,
-    functionName: 'setSafeCollateralRatio',
-  })
-
-/**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"superLiquidation"`
- */
-export const useWriteAnchorEngineSuperLiquidation =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: anchorEngineAbi,
-    functionName: 'superLiquidation',
+    functionName: 'setMinCollateralRatio',
   })
 
 /**
@@ -1460,21 +1650,30 @@ export const useSimulateAnchorEngine = /*#__PURE__*/ createUseSimulateContract({
 })
 
 /**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"auctionExcessYield"`
+ */
+export const useSimulateAnchorEngineAuctionExcessYield =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: anchorEngineAbi,
+    functionName: 'auctionExcessYield',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"batchRedeemCollateral"`
+ */
+export const useSimulateAnchorEngineBatchRedeemCollateral =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: anchorEngineAbi,
+    functionName: 'batchRedeemCollateral',
+  })
+
+/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"becomeRedemptionProvider"`
  */
 export const useSimulateAnchorEngineBecomeRedemptionProvider =
   /*#__PURE__*/ createUseSimulateContract({
     abi: anchorEngineAbi,
     functionName: 'becomeRedemptionProvider',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"burn"`
- */
-export const useSimulateAnchorEngineBurn =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: anchorEngineAbi,
-    functionName: 'burn',
   })
 
 /**
@@ -1496,21 +1695,12 @@ export const useSimulateAnchorEngineDepositStEthToMint =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"excessIncomeDistribution"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"liquidatePosition"`
  */
-export const useSimulateAnchorEngineExcessIncomeDistribution =
+export const useSimulateAnchorEngineLiquidatePosition =
   /*#__PURE__*/ createUseSimulateContract({
     abi: anchorEngineAbi,
-    functionName: 'excessIncomeDistribution',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"liquidation"`
- */
-export const useSimulateAnchorEngineLiquidation =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: anchorEngineAbi,
-    functionName: 'liquidation',
+    functionName: 'liquidatePosition',
   })
 
 /**
@@ -1532,15 +1722,6 @@ export const useSimulateAnchorEngineRedeemCollateral =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"redeemFromAllProviders"`
- */
-export const useSimulateAnchorEngineRedeemFromAllProviders =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: anchorEngineAbi,
-    functionName: 'redeemFromAllProviders',
-  })
-
-/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"removeRedemptionProvider"`
  */
 export const useSimulateAnchorEngineRemoveRedemptionProvider =
@@ -1550,12 +1731,21 @@ export const useSimulateAnchorEngineRemoveRedemptionProvider =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setBorrowApy"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"repay"`
  */
-export const useSimulateAnchorEngineSetBorrowApy =
+export const useSimulateAnchorEngineRepay =
   /*#__PURE__*/ createUseSimulateContract({
     abi: anchorEngineAbi,
-    functionName: 'setBorrowApy',
+    functionName: 'repay',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setFeeShare"`
+ */
+export const useSimulateAnchorEngineSetFeeShare =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: anchorEngineAbi,
+    functionName: 'setFeeShare',
   })
 
 /**
@@ -1577,30 +1767,21 @@ export const useSimulateAnchorEngineSetKeeperRate =
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setRedemptionFee"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setLidoRebaseTime"`
  */
-export const useSimulateAnchorEngineSetRedemptionFee =
+export const useSimulateAnchorEngineSetLidoRebaseTime =
   /*#__PURE__*/ createUseSimulateContract({
     abi: anchorEngineAbi,
-    functionName: 'setRedemptionFee',
+    functionName: 'setLidoRebaseTime',
   })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setSafeCollateralRatio"`
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"setMinCollateralRatio"`
  */
-export const useSimulateAnchorEngineSetSafeCollateralRatio =
+export const useSimulateAnchorEngineSetMinCollateralRatio =
   /*#__PURE__*/ createUseSimulateContract({
     abi: anchorEngineAbi,
-    functionName: 'setSafeCollateralRatio',
-  })
-
-/**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"superLiquidation"`
- */
-export const useSimulateAnchorEngineSuperLiquidation =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: anchorEngineAbi,
-    functionName: 'superLiquidation',
+    functionName: 'setMinCollateralRatio',
   })
 
 /**
@@ -1619,12 +1800,12 @@ export const useWatchAnchorEngineEvent =
   /*#__PURE__*/ createUseWatchContractEvent({ abi: anchorEngineAbi })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"BorrowApyChanged"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"BatchRedeemedCollateral"`
  */
-export const useWatchAnchorEngineBorrowApyChangedEvent =
+export const useWatchAnchorEngineBatchRedeemedCollateralEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: anchorEngineAbi,
-    eventName: 'BorrowApyChanged',
+    eventName: 'BatchRedeemedCollateral',
   })
 
 /**
@@ -1646,6 +1827,24 @@ export const useWatchAnchorEngineDepositEtherEvent =
   })
 
 /**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"FeeDistribution"`
+ */
+export const useWatchAnchorEngineFeeDistributionEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: anchorEngineAbi,
+    eventName: 'FeeDistribution',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"FeeShareChanged"`
+ */
+export const useWatchAnchorEngineFeeShareChangedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: anchorEngineAbi,
+    eventName: 'FeeShareChanged',
+  })
+
+/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"GovernanceAuthorityTransfer"`
  */
 export const useWatchAnchorEngineGovernanceAuthorityTransferEvent =
@@ -1664,12 +1863,12 @@ export const useWatchAnchorEngineKeeperRateChangedEvent =
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"LSDistribution"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"LSDValueCaptured"`
  */
-export const useWatchAnchorEngineLsDistributionEvent =
+export const useWatchAnchorEngineLsdValueCapturedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: anchorEngineAbi,
-    eventName: 'LSDistribution',
+    eventName: 'LSDValueCaptured',
   })
 
 /**
@@ -1679,6 +1878,15 @@ export const useWatchAnchorEngineLiquidationRecordEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: anchorEngineAbi,
     eventName: 'LiquidationRecord',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"MinCollateralRatioChanged"`
+ */
+export const useWatchAnchorEngineMinCollateralRatioChangedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: anchorEngineAbi,
+    eventName: 'MinCollateralRatioChanged',
   })
 
 /**
@@ -1709,21 +1917,21 @@ export const useWatchAnchorEngineRedemptionFeeChangedEvent =
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"RedemptionProvider"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"RedemptionProviderRegistered"`
  */
-export const useWatchAnchorEngineRedemptionProviderEvent =
+export const useWatchAnchorEngineRedemptionProviderRegisteredEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: anchorEngineAbi,
-    eventName: 'RedemptionProvider',
+    eventName: 'RedemptionProviderRegistered',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"SafeCollateralRatioChanged"`
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link anchorEngineAbi}__ and `eventName` set to `"RedemptionProviderRemoved"`
  */
-export const useWatchAnchorEngineSafeCollateralRatioChangedEvent =
+export const useWatchAnchorEngineRedemptionProviderRemovedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: anchorEngineAbi,
-    eventName: 'SafeCollateralRatioChanged',
+    eventName: 'RedemptionProviderRemoved',
   })
 
 /**

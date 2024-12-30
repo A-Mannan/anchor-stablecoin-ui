@@ -105,7 +105,7 @@ export const FadeInDiv = ({
     return tab.value === tabs[0].value;
   };
   return (
-    <div className="relative sm:w-1/2 w-11/12 min-h-96 mx-auto">
+    <div className="relative sm:w-[580px] w-11/12 min-h-[450px] mx-auto">
       {tabs.map((tab, idx) => (
         <motion.div
           key={tab.value}
@@ -120,7 +120,7 @@ export const FadeInDiv = ({
             y: isActive(tab) ? [0, 40, 0] : 0,
           }}
           className={cn(
-            "w-full h-full absolute top-0 left-0 bg-secondary rounded-3xl",
+            "w-full h-full absolute top-0 left-0 bg-secondary rounded-3xl shadow-lg shadow-primary",
             className
           )}
         >

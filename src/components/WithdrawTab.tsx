@@ -132,15 +132,13 @@ const WithdrawTab: React.FC<{}> = () => {
           id="withdraw"
           isDisabled={isExecuting}
         />
-        {error && (
-          <div
-            className="p-4 text-sm rounded-lg bg-gray-800 text-red-500"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
-        <div className="flex mt-auto">
+        <div
+          className={`p-4 text-xs rounded-lg bg-primary border border-red-500 text-red-500 h-8 w-11/12 mx-auto flex items-center justify-center ${error ? "" : "invisible"}`}
+          role="alert"
+        >
+          {error}
+        </div>
+        <div className="flex">
           <AnimatedButton onClick={handleWithdraw} isDisabled={isExecuting}>
             Withdraw
           </AnimatedButton>

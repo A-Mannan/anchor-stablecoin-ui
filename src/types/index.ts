@@ -10,4 +10,12 @@ interface NetworkAddresses {
   [chainId: number]: NetworkAddress;
 }
 
-export type { NetworkAddresses , NetworkAddress};
+// Type for data returned from the subgraph
+interface RedemptionProvider {
+  id: string;
+  redemptionFeeRate: string;
+  redemptionAmount: string;
+}
+
+
+export type { NetworkAddresses , NetworkAddress, RedemptionProvider};
