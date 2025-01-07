@@ -12,6 +12,8 @@ import { formatUnits, parseUnits } from "viem";
 import { useDebounce } from "use-debounce";
 import { toast } from "react-toastify";
 import StatsDisplay from "./StatsDisplay";
+import { formatNumber } from "../utils/formatNumber";
+import ErrorDisplay from "./ErrorDisplay";
 
 const WithdrawTab: React.FC<{}> = () => {
   const [withdrawAmount, setWithdrawAmount] = useState<string | "">("");
@@ -94,16 +96,16 @@ const WithdrawTab: React.FC<{}> = () => {
   const stats = [
     {
       label: "Price of ETH in USD",
-      value: formatUnits(ethPriceInUsd || 0n, 18),
+      value: `$${formatUnits(ethPriceInUsd || 0n, 18)}`,
     },
     {
       label: "Debt",
-      value: formatUnits(debtAmount || 0n, 18),
+      value: `$${formatUnits(debtAmount || 0n, 18)}`,
     },
     {
       label: "Collateral",
-      value: formatUnits(collateralAmount || 0n, 18),
-      newValue: formatUnits(newCollateralAmount, 18),
+      value: `${formatUnits(collateralAmount || 0n, 18)} ETH`,
+      newValue: `${formatUnits(newCollateralAmount, 18)} ETH`,
       deltaColor: "text-red-500",
       displayChange: (collateralAmount || 0n) !== newCollateralAmount,
     },
@@ -112,11 +114,11 @@ const WithdrawTab: React.FC<{}> = () => {
       value:
         collateralRatioBefore === INFINITY_BIGINT
           ? "∞"
-          : `${formatUnits(collateralRatioBefore, 18)}%`,
+          : `${formatNumber(formatUnits(collateralRatioBefore, 18))}%`,
       newValue:
         collateralRatioAfter === INFINITY_BIGINT
           ? "∞"
-          : `${formatUnits(collateralRatioAfter, 18)}%`,
+          : `${formatNumber(formatUnits(collateralRatioAfter, 18))}%`,
       deltaColor: "text-red-500",
       displayChange: collateralRatioBefore !== collateralRatioAfter,
     },
@@ -132,12 +134,7 @@ const WithdrawTab: React.FC<{}> = () => {
           id="withdraw"
           isDisabled={isExecuting}
         />
-        <div
-          className={`p-4 text-xs rounded-lg bg-primary border border-red-500 text-red-500 h-8 w-11/12 mx-auto flex items-center justify-center ${error ? "" : "invisible"}`}
-          role="alert"
-        >
-          {error}
-        </div>
+        <ErrorDisplay error={error} />
         <div className="flex">
           <AnimatedButton onClick={handleWithdraw} isDisabled={isExecuting}>
             Withdraw

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // Define the Borrower type according to the subgraph schema
 interface Borrower {
@@ -7,6 +8,7 @@ interface Borrower {
   collateral: number;
 }
 
+// Dummy data to simulate fetching from the subgraph
 const dummyBorrowers: Borrower[] = [
   {
     id: "0x1234567890abcdef1234567890abcdef12345678",
@@ -27,84 +29,58 @@ const dummyBorrowers: Borrower[] = [
 
 const LiquidationPage: React.FC = () => {
   const [borrowers, setBorrowers] = useState<Borrower[]>([]);
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const [liquidationAmount, setLiquidationAmount] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate fetching data (replace with actual GraphQL query)
     setBorrowers(dummyBorrowers);
   }, []);
 
-  const handleLiquidation = (borrowerId: string) => {
-    console.log(`Liquidating ${liquidationAmount} for borrower ${borrowerId}`);
-    // Implement actual liquidation logic here
-  };
-
   return (
-    <div className="flex flex-col items-center justify-start pt-10">
+    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full">
+      <div className="self-start p-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-lightBlue transition-all duration-300 border border-lightBlue hover:text-primary hover:bg-lightBlue rounded-lg px-4 py-2"
+        >
+          &larr; Back
+        </button>
+      </div>
+
       <h1 className="text-3xl font-semibold text-accent mb-8 text-center">
-        Liquidatable Positions
+        Liquidate Positions
       </h1>
+
       <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8">
-        {/* Table Header */}
         <div className="grid grid-cols-3 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
           <div>Address</div>
           <div>Debt (USD)</div>
           <div>Collateral (USD)</div>
         </div>
 
-        {/* Table Rows */}
         {borrowers.length > 0 ? (
           borrowers.map((borrower) => (
-            <div
+            <Link
               key={borrower.id}
-              onMouseEnter={() => setExpandedRow(borrower.id)}
-              onMouseLeave={() => setExpandedRow(null)}
-              className={`relative flex flex-col items-center rounded-lg p-4 mb-4 transition-all duration-700 ease-in-out ${
-                expandedRow === borrower.id
-                  ? "bg-primary/80 shadow-2xl"
-                  : "bg-primary/60 shadow-lg"
-              }`}
+              className="group relative grid grid-cols-3 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 overflow-hidden cursor-pointer"
+              to={`/earn/liquidation/${borrower.id}`}
             >
-              {/* First Div - Address, Debt, and Collateral */}
-              <div className="flex w-full justify-between text-center text-sm font-medium">
-                <div className="text-accent truncate w-1/3">{borrower.id}</div>
-                <div className="text-red-500 w-1/3">${borrower.debt.toLocaleString()}</div>
-                <div className="text-green-500 w-1/3">${borrower.collateral.toLocaleString()}</div>
+              <span className="absolute inset-0 flex items-center justify-center bg-primary/80 text-white text-lg font-bold duration-300 -translate-x-full group-hover:translate-x-0 ease">
+                Click to liquidate position &rarr;
+              </span>
+              <div className="relative text-accent truncate text-center text-sm font-medium group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
+                {borrower.id}
               </div>
-
-              {/* Second Div - Expanded Section */}
-              <div
-                className={`w-full flex justify-center items-center mt-2 transition-all duration-700 ease-in-out overflow-hidden ${
-                  expandedRow === borrower.id ? "opacity-100" : "opacity-0"
-                }`}
-                style={{
-                  maxHeight: expandedRow === borrower.id ? "200px" : "0", // Adjust max-height as per content
-                }}
-              >
-                <div className="flex w-full justify-center gap-4 bg-secondary rounded-lg p-4 shadow-lg">
-                  <input
-                    type="text"
-                    placeholder="Amount to Liquidate"
-                    value={liquidationAmount}
-                    onChange={(e) =>
-                      setLiquidationAmount(parseFloat(e.target.value) || 0)
-                    }
-                    className="w-3/4 px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-lightBlue"
-                  />
-                  <button
-                    onClick={() => handleLiquidation(borrower.id)}
-                    className="px-6 py-2 bg-lightBlue text-primary font-medium rounded-lg shadow-md hover:shadow-xl hover:bg-lightBlue/80 transition duration-700"
-                  >
-                    Liquidate
-                  </button>
-                </div>
+              <div className="relative text-red-500 text-center text-sm font-semibold group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
+                ${borrower.debt.toLocaleString()}
               </div>
-            </div>
+              <div className="relative text-green-500 text-center text-sm font-semibold group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
+                ${borrower.collateral.toLocaleString()}
+              </div>
+            </Link>
           ))
         ) : (
           <div className="text-center py-6 text-gray-300 text-lg">
-            No Positions Opened
+            No Positions opened
           </div>
         )}
       </div>

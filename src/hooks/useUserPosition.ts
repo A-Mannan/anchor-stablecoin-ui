@@ -1,11 +1,5 @@
 import { useEffect } from "react";
-import {
-  useReadAnchorEngineUserPositions,
-  useWatchAnchorEngineDepositEtherEvent,
-  useWatchAnchorEngineMintEvent,
-  useWatchAnchorEngineBurnEvent,
-  useWatchAnchorEngineWithdrawEtherEvent,
-} from "../abis";
+import { useReadAnchorEngineUserPositions } from "../abis";
 import { useContractAddress } from "./useContractAddress";
 import { useAccount } from "wagmi";
 import type { Address } from "viem";
@@ -16,13 +10,15 @@ interface UseUserPositionReturnType {
   fetchUserPosition: () => Promise<void>;
 }
 
-export const useUserPosition = (): UseUserPositionReturnType => {
+export const useUserPosition = (
+  userAddress?: Address
+): UseUserPositionReturnType => {
   const { anchorEngineAddress } = useContractAddress();
   const { address } = useAccount();
 
   const { data: userPosition, refetch } = useReadAnchorEngineUserPositions({
     address: anchorEngineAddress,
-    args: [address as Address],
+    args: [userAddress || (address as Address)],
   });
 
   // Function to fetch user position
@@ -39,14 +35,14 @@ export const useUserPosition = (): UseUserPositionReturnType => {
     if (anchorEngineAddress && address) {
       fetchUserPosition();
     }
-  }, [anchorEngineAddress, address, refetch]);
+  }, [anchorEngineAddress, userAddress, address, refetch]);
 
   // Event listeners for contract events to update user position
   // useWatchAnchorEngineDepositEtherEvent({
   //   address: anchorEngineAddress,
-    // args: {
-    //   onBehalfOf: address as Address,
-    // },
+  // args: {
+  //   onBehalfOf: address as Address,
+  // },
   //   onLogs() {
   //     console.log("Deposit event triggered");
   //     fetchUserPosition();

@@ -5,37 +5,29 @@ import { useWatchBlockNumber } from "wagmi";
 
 interface UseEthPriceInUsdReturnType {
   ethPriceInUsd: bigint | undefined;
+  refetchEthPriceInUsd: () => Promise<void>;
 }
 
-export const useEthPriceInUsd = (): UseEthPriceInUsdReturnType => {
+export const useEthPriceInUsd = () => {
   const { anchorEngineAddress } = useContractAddress();
 
-  const { data: ethPriceInUsd, refetch } = useReadAnchorEngineFetchEthPriceInUsd({
+  const { data: ethPriceInUsd, refetch: refetchEthPriceInUsd } = useReadAnchorEngineFetchEthPriceInUsd({
     address: anchorEngineAddress,
   });
-
-  // Function to fetch and update ETH price
-  const fetchEthPriceInUsd = async () => {
-    try {
-      await refetch();
-    } catch (error) {
-      console.error("Error fetching ETH price:", error);
-    }
-  };
 
   // Initial fetch and subsequent updates when the address changes
   useEffect(() => {
     if (anchorEngineAddress) {
-      fetchEthPriceInUsd();
+      refetchEthPriceInUsd();
     }
-  }, [anchorEngineAddress, refetch]);
+  }, [anchorEngineAddress, refetchEthPriceInUsd]);
 
   // Refetch data whenever the block number changes
   useWatchBlockNumber({
     onBlockNumber() {
-      fetchEthPriceInUsd();
+      refetchEthPriceInUsd();
     },
   });
 
-  return { ethPriceInUsd };
+  return { ethPriceInUsd, refetchEthPriceInUsd };
 };

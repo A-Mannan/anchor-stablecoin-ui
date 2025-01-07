@@ -20,7 +20,7 @@ const Navbar: React.FC<{}> = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className=" mb-8 p-5">
+    <nav className="p-5">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 fixed top-0 left-0 right-0">
         <Link to="/" className="flex items-center space-x-3">
           <Logo />

@@ -66,13 +66,6 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'stETHAmount', internalType: 'uint256', type: 'uint256' }],
-    name: 'auctionExcessYield',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [
       { name: 'providers', internalType: 'address[]', type: 'address[]' },
       { name: 'amount', internalType: 'uint256', type: 'uint256' },
@@ -164,6 +157,13 @@ export const anchorEngineAbi = [
   },
   {
     type: 'function',
+    inputs: [],
+    name: 'getHarvestableYield',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'index', internalType: 'uint256', type: 'uint256' }],
     name: 'getRedemptionProviderAtIndex',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
@@ -179,9 +179,23 @@ export const anchorEngineAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'getTimePassedSinceRebase',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'governance',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'stETHAmount', internalType: 'uint256', type: 'uint256' }],
+    name: 'harvestYieldAndAuction',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -1386,6 +1400,15 @@ export const useReadAnchorEngineGetDutchAuctionDiscountPrice =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"getHarvestableYield"`
+ */
+export const useReadAnchorEngineGetHarvestableYield =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'getHarvestableYield',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"getRedemptionProviderAtIndex"`
  */
 export const useReadAnchorEngineGetRedemptionProviderAtIndex =
@@ -1401,6 +1424,15 @@ export const useReadAnchorEngineGetRedemptionProvidersCount =
   /*#__PURE__*/ createUseReadContract({
     abi: anchorEngineAbi,
     functionName: 'getRedemptionProvidersCount',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"getTimePassedSinceRebase"`
+ */
+export const useReadAnchorEngineGetTimePassedSinceRebase =
+  /*#__PURE__*/ createUseReadContract({
+    abi: anchorEngineAbi,
+    functionName: 'getTimePassedSinceRebase',
   })
 
 /**
@@ -1501,15 +1533,6 @@ export const useWriteAnchorEngine = /*#__PURE__*/ createUseWriteContract({
 })
 
 /**
- * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"auctionExcessYield"`
- */
-export const useWriteAnchorEngineAuctionExcessYield =
-  /*#__PURE__*/ createUseWriteContract({
-    abi: anchorEngineAbi,
-    functionName: 'auctionExcessYield',
-  })
-
-/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"batchRedeemCollateral"`
  */
 export const useWriteAnchorEngineBatchRedeemCollateral =
@@ -1543,6 +1566,15 @@ export const useWriteAnchorEngineDepositStEthToMint =
   /*#__PURE__*/ createUseWriteContract({
     abi: anchorEngineAbi,
     functionName: 'depositStETHToMint',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"harvestYieldAndAuction"`
+ */
+export const useWriteAnchorEngineHarvestYieldAndAuction =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: anchorEngineAbi,
+    functionName: 'harvestYieldAndAuction',
   })
 
 /**
@@ -1650,15 +1682,6 @@ export const useSimulateAnchorEngine = /*#__PURE__*/ createUseSimulateContract({
 })
 
 /**
- * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"auctionExcessYield"`
- */
-export const useSimulateAnchorEngineAuctionExcessYield =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: anchorEngineAbi,
-    functionName: 'auctionExcessYield',
-  })
-
-/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"batchRedeemCollateral"`
  */
 export const useSimulateAnchorEngineBatchRedeemCollateral =
@@ -1692,6 +1715,15 @@ export const useSimulateAnchorEngineDepositStEthToMint =
   /*#__PURE__*/ createUseSimulateContract({
     abi: anchorEngineAbi,
     functionName: 'depositStETHToMint',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link anchorEngineAbi}__ and `functionName` set to `"harvestYieldAndAuction"`
+ */
+export const useSimulateAnchorEngineHarvestYieldAndAuction =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: anchorEngineAbi,
+    functionName: 'harvestYieldAndAuction',
   })
 
 /**

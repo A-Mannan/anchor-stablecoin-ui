@@ -3,12 +3,19 @@ import LabeledNumberInput from "./LabeledNumberInput";
 import AnimatedButton from "./AnimatedButton";
 import StatsDisplay from "./StatsDisplay";
 import { useEthPriceInUsd } from "../hooks/useEthPriceInUsd";
-import { formatUnits, parseUnits } from "viem";
+import { Address, formatUnits, parseUnits } from "viem";
 import { useDebounce } from "use-debounce";
 import { useBatchRedeem } from "../hooks/useBatchRedeem";
 import { gql, useQuery } from "urql";
 import { RedemptionProvider } from "../types";
-import { calculateRedemptionFees } from "../utils/redemptionFees";
+import {
+  calculateAmountWithSlippage,
+  calculateEthOut,
+  calculateRedemptionFees,
+} from "../utils/redemption";
+import { useUserBalance } from "../hooks/useUserBalance";
+import { toast } from "react-toastify";
+import ErrorDisplay from "./ErrorDisplay";
 
 // GraphQL query to fetch borrower data
 const REDEMPTION_PROVIDERS_QUERY = gql`
@@ -34,9 +41,10 @@ const RedeemTab: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { ethPriceInUsd } = useEthPriceInUsd();
+  const { anchorUsdBalance, fetchAnchorUsdBalance } = useUserBalance();
   const { redeem } = useBatchRedeem();
 
-  const [{ data, fetching, error: queryError }] = useQuery({
+  const [{ data }, reexecuteQuery] = useQuery({
     query: REDEMPTION_PROVIDERS_QUERY,
   });
 
@@ -84,26 +92,36 @@ const RedeemTab: React.FC = () => {
 
   const redeemAmountInUnits = parseUnits(debouncedRedeemAmount || "0", 18);
 
-  const { totalFeePaid, averageFeeRate } = redeemAmountInUnits && data?.borrowers
-    ? calculateRedemptionFees(data?.borrowers, redeemAmountInUnits)
-    : { totalFeePaid: 0n, averageFeeRate: 0n };
+  const { totalFeePaid, averageFeeRate } =
+    redeemAmountInUnits && data?.borrowers
+      ? calculateRedemptionFees(data?.borrowers, redeemAmountInUnits)
+      : { totalFeePaid: 0n, averageFeeRate: 0n };
+
+  const ethOutAmount =
+    redeemAmountInUnits && data?.borrowers && ethPriceInUsd
+      ? calculateEthOut(data?.borrowers, redeemAmountInUnits, ethPriceInUsd)
+      : 0n;
+
+  useEffect(() => {
+    console.log("updated data", data);
+  }, [data]);
 
   const stats = [
     {
       label: "Price of ETH in USD",
-      value: formatUnits(ethPriceInUsd || 0n, 18),
+      value: `$${formatUnits(ethPriceInUsd || 0n, 18)}`,
     },
     {
-      label: "Total Redemption Amount",
-      value: formatUnits(totalRedemptionAmount || 0n, 18),
+      label: "Total Available Redemption",
+      value: `$${formatUnits(totalRedemptionAmount || 0n, 18)}`,
     },
     {
-      label: "Expected Fee",
-      value: `${formatUnits(totalFeePaid, 18)} (${formatUnits(averageFeeRate, 2)} %)`,
+      label: "Est. Redemption Fee",
+      value: `$${formatUnits(totalFeePaid, 18)} (${formatUnits(averageFeeRate, 2)}%)`,
     },
     {
-      label: "Ether out",
-      value: formatUnits(ethPriceInUsd || 0n, 18),
+      label: "Est. Redeemable ETH ",
+      value: `${formatUnits(ethOutAmount, 18)} ETH`,
     },
   ];
 
@@ -115,7 +133,42 @@ const RedeemTab: React.FC = () => {
       return;
     }
 
-    // Handle the redeem logic here
+    if (redeemAmountInUnits > (totalRedemptionAmount || 0n)) {
+      setError("Cannot redeem more than available");
+      return;
+    }
+
+    fetchAnchorUsdBalance();
+
+    if ((anchorUsdBalance as bigint) < redeemAmountInUnits) {
+      setError("Insufficient AnchorUSD Balance");
+      return;
+    }
+
+    const minEthOut = calculateAmountWithSlippage(ethOutAmount, slippage);
+
+    reexecuteQuery();
+    const providers: Address[] =
+      data?.borrowers?.map((borrower: RedemptionProvider) => borrower.id) || [];
+
+    if (providers.length === 0) {
+      setError("No providers available for redemption");
+      return;
+    }
+    setIsExecuting(true);
+    try {
+      await redeem(providers, redeemAmountInUnits, minEthOut);
+      reexecuteQuery();
+      toast.success("Redeem successful", {
+        position: "top-center",
+      });
+    } catch (err) {
+      console.error("Redeem transaction failed:", err);
+      toast.error("Redeem transaction failed", {
+        position: "top-center",
+      });
+    }
+    setIsExecuting(false);
   };
 
   return (
@@ -130,7 +183,7 @@ const RedeemTab: React.FC = () => {
         />
 
         {/* Slippage Section */}
-        <div className="flex flex-col border border-accent rounded-md py-3 px-4 relative sm:w-11/12 mx-auto gap-1">
+        <div className="flex flex-col border border-accent rounded-lg py-3 px-4 relative sm:w-11/12 mx-auto gap-1">
           <span className="text-xs text-accent absolute -top-2 bg-secondary px-2">
             Slippage Tolerance
           </span>
@@ -176,15 +229,12 @@ const RedeemTab: React.FC = () => {
           </div>
         </div>
 
-        <div
-          className={`p-4 text-xs rounded-lg bg-primary border border-red-500 text-red-500 h-8 w-11/12 mx-auto flex items-center justify-center ${error ? "" : "invisible"}`}
-          role="alert"
-        >
-          {error}
-        </div>
+        <ErrorDisplay error={error} />
 
         <div className="flex">
-          <AnimatedButton onClick={handleRedeem}>Redeem</AnimatedButton>
+          <AnimatedButton onClick={handleRedeem} isDisabled={isExecuting}>
+            Redeem
+          </AnimatedButton>
         </div>
       </div>
       <div>

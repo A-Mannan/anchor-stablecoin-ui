@@ -56,7 +56,7 @@ const LabeledNumberInput: React.FC<LabeledNumberInputProps> = ({
       </button> */}
       <label
         htmlFor={id}
-        className="absolute text-sm text-accent bg-secondary duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary peer-focus:bg-accent peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:-translate-x-1/4 rtl:peer-focus:left-auto start-2.5"
+        className="absolute text-sm text-accent font-medium bg-secondary duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-focus:text-primary peer-focus:bg-accent peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:-translate-x-1/4 rtl:peer-focus:left-auto start-2.5"
       >
         {description}
       </label>

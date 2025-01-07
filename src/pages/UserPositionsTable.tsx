@@ -68,13 +68,13 @@ const UserPositions: React.FC = () => {
   }, [data, ethPriceInUsd]);
 
   return (
-    <div className="flex flex-col items-center justify-start pt-10 h-fit">
+    <div className="flex flex-col items-center justify-start h-fit">
       <h1 className="text-3xl font-semibold text-accent mb-8 text-center">
         Borrowers' Positions
       </h1>
       <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8 border border-lightBlue">
         {/* Table Header */}
-        <div className="grid grid-cols-5 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
+        <div className="grid grid-cols-5 text-primary text-center p-4 bg-lightBlue backdrop-blur-md rounded-lg mb-4 font-semibold">
           <div>Address</div>
           <div>Debt (USD)</div>
           <div>Collateral (ETH)</div>

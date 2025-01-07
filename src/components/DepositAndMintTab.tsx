@@ -13,6 +13,8 @@ import {
 import { formatUnits, parseUnits } from "viem";
 import { useDebounce } from "use-debounce";
 import { toast } from "react-toastify";
+import { formatNumber } from "../utils/formatNumber";
+import ErrorDisplay from "./ErrorDisplay";
 
 const DepositAndMintTab: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<string>("");
@@ -129,19 +131,19 @@ const DepositAndMintTab: React.FC = () => {
   const stats = [
     {
       label: "Price of ETH in USD",
-      value: formatUnits(ethPriceInUsd || 0n, 18),
+      value: `$${formatUnits(ethPriceInUsd || 0n, 18)}`,
     },
     {
       label: "Debt",
-      value: formatUnits(debtAmount || 0n, 18),
-      newValue: formatUnits(newDebtAmount, 18),
+      value: `$${formatUnits(debtAmount || 0n, 18)}`,
+      newValue: `$${formatUnits(newDebtAmount, 18)}`,
       deltaColor: "text-red-500",
       displayChange: (debtAmount || 0n) !== newDebtAmount,
     },
     {
       label: "Collateral",
-      value: formatUnits(collateralAmount || 0n, 18),
-      newValue: formatUnits(newCollateralAmount, 18),
+      value: `${formatUnits(collateralAmount || 0n, 18)} ETH`,
+      newValue: `${formatUnits(newCollateralAmount, 18)} ETH`,
       deltaColor: "text-green-500",
       displayChange: (collateralAmount || 0n) !== newCollateralAmount,
     },
@@ -150,11 +152,11 @@ const DepositAndMintTab: React.FC = () => {
       value:
         collateralRatioBefore === INFINITY_BIGINT
           ? "∞"
-          : `${formatUnits(collateralRatioBefore, 18)}%`,
+          : `${formatNumber(formatUnits(collateralRatioBefore, 18))}%`,
       newValue:
         collateralRatioAfter === INFINITY_BIGINT
           ? "∞"
-          : `${formatUnits(collateralRatioAfter, 18)}%`,
+          : `${formatNumber(formatUnits(collateralRatioAfter, 18))}%`,
       deltaColor:
         collateralRatioAfter < collateralRatioBefore
           ? "text-red-500"
@@ -181,12 +183,7 @@ const DepositAndMintTab: React.FC = () => {
           isDisabled={isExecuting}
         />
 
-        <div
-          className={`p-4 text-xs rounded-lg bg-primary border border-red-500 text-red-500 h-8 w-11/12 mx-auto flex items-center justify-center ${error ? "" : "invisible"}`}
-          role="alert"
-        >
-          {error}
-        </div>
+        <ErrorDisplay error={error} />
 
         <div className="flex">
           <AnimatedButton

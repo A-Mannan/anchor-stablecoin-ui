@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AnimatedButton from "../components/AnimatedButton";
+import { Link } from "react-router-dom";
 
 // Define the Borrower type according to the subgraph schema
 interface Borrower {
@@ -24,76 +27,80 @@ const dummyBorrowers: Borrower[] = [
     debt: 7000,
     collateral: 20000,
   },
-  // Add more as needed
 ];
 
 const RedemptionProviderPage: React.FC = () => {
   const [borrowers, setBorrowers] = useState<Borrower[]>([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [amountToProvide, setAmountToProvide] = useState<number>(0);
+  const navigate = useNavigate();
 
-  // Simulate fetching data (replace this with actual subgraph query)
   useEffect(() => {
-    // This would be replaced by your GraphQL query to the subgraph
     setBorrowers(dummyBorrowers);
   }, []);
 
-  // Toggle drawer visibility
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
-  // Handle the confirmation action
-  const handleConfirmRedemption = () => {
-    if (amountToProvide > 0) {
-      // Handle the action to provide redemption amount
-      console.log(`Providing ${amountToProvide} for redemption`);
-      setIsDrawerOpen(false); // Close drawer after action
-    }
-  };
 
   return (
-    <div className="flex flex-col items-center justify-start pt-10">
+    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full">
+       {/* Back Button */}
+       <div className="self-start p-6">
+        <button
+          onClick={() => navigate(-1)} // Navigate back to the previous page
+          className="text-lightBlue transition-all duration-300 border border-lightBlue hover:text-primary hover:bg-lightBlue rounded-lg px-4 py-2"
+        >
+          &larr; Back
+        </button>
+      </div>
+
       <h1 className="text-3xl font-semibold text-accent mb-8 text-center">
         Redemption Providers
       </h1>
 
-      {/* Manage Redemption Button */}
       <div className="mb-6">
-        <button
-          onClick={toggleDrawer}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2"
+        <Link
+          to="/earn/redemption-provider/manage"
+          className="relative inline-flex items-center justify-center p-4 px-6 py-3 overflow-hidden font-medium text-lightBlue transition duration-300 ease-out border-2 border-lightBlue rounded-full shadow-md group"
         >
-          Manage Redemption
-        </button>
+          <span className="absolute inset-0 flex items-center justify-center w-full h-full text-primary duration-300 -translate-x-full bg-lightBlue group-hover:translate-x-0 ease">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              ></path>
+            </svg>
+          </span>
+          <span className="absolute flex items-center justify-center w-full h-full text-lightBlue font-semibold transition-all duration-300 transform group-hover:translate-x-full ease text-md">
+            Manage Redemption
+          </span>
+          <span className="relative invisible">Manage Redemption</span>
+        </Link>
       </div>
 
       <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8">
-        {/* Table Header */}
         <div className="grid grid-cols-3 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
           <div>Address</div>
           <div>Debt (USD)</div>
           <div>Collateral (USD)</div>
         </div>
 
-        {/* Table Rows */}
         {borrowers.length > 0 ? (
           borrowers.map((borrower) => (
             <div
               key={borrower.id}
               className="grid grid-cols-3 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 hover:bg-primary hover:shadow-2xl transition-all duration-300 ease-in-out"
             >
-              {/* Address */}
               <div className="text-accent truncate text-center text-sm font-medium">
                 {borrower.id}
               </div>
-
-              {/* Debt */}
               <div className="text-red-500 text-center text-sm font-semibold">
                 ${borrower.debt.toLocaleString()}
               </div>
-
-              {/* Collateral */}
               <div className="text-green-500 text-center text-sm font-semibold">
                 ${borrower.collateral.toLocaleString()}
               </div>
@@ -105,54 +112,6 @@ const RedemptionProviderPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Left-Side Drawer Component */}
-      {isDrawerOpen && (
-        <div className="fixed inset-0 flex justify-start bg-opacity-50 bg-gray-800 z-40">
-          <div className="w-80 bg-primary p-6 flex flex-col justify-center gap-5">
-            <h5 className="text-2xl font-bold text-gray-500 text-center mb-12">
-              Manage Redemption
-            </h5>
-            <button
-              onClick={toggleDrawer}
-              className="absolute top-2.5 right-2.5 text-gray-400 hover:text-gray-900"
-            >
-              <svg
-                className="w-6 h-6"
-                aria-hidden="true"
-                fill="none"
-                viewBox="0 0 14 14"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M1 1L7 7M1 7L7 1"
-                />
-              </svg>
-            </button>
-
-            <div className="mb-4">
-              <input
-                type="number"
-                value={amountToProvide}
-                onChange={(e) => setAmountToProvide(Number(e.target.value))}
-                placeholder="Amount to Provide"
-                className="w-full p-2 border rounded-lg"
-              />
-            </div>
-
-            <button
-              onClick={handleConfirmRedemption}
-              className="w-full px-6 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800"
-            >
-              Confirm Redemption
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

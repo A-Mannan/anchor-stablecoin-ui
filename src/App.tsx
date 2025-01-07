@@ -9,27 +9,39 @@ import DutchAuctionPage from "./pages/DutchAuction";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RedemptionProviderPage from "./pages/RedemptionProvider";
+import ManageRedemptionPage from "./pages/ManageRedemptionPage";
+import LiquidatePositionPage from "./pages/LiquidatePositionPage";
 
 const App: React.FC<{}> = () => {
   return (
     <>
       <Router>
-        <Layout />
-        <Routes>
-          <Route path="/" element={<Position />} />
-          <Route path="/position" element={<UserPositions />} />
-          <Route path="/earn" element={<Earn />} />
-          <Route path="/earn/liquidation" element={<LiquidationPage />} />
-          <Route path="/earn/redemption-provider" element={<RedemptionProviderPage />} />
-          
-          {/* <Route
+        <div className="flex flex-col justify-center gap-5 h-screen w-screen">
+          <Layout />
+          <Routes>
+            <Route path="/" element={<Position />} />
+            <Route path="/position" element={<UserPositions />} />
+            <Route path="/earn" element={<Earn />} />
+            <Route path="/earn/liquidation" element={<LiquidationPage />} />
+            <Route path="/earn/liquidation/:id" element={<LiquidatePositionPage />} />
+            <Route
+              path="/earn/redemption-provider"
+              element={<RedemptionProviderPage />}
+            />
+            <Route
+              path="/earn/redemption-provider/manage"
+              element={<ManageRedemptionPage />}
+            />
+
+            {/* <Route
               path="redemption-provider"
               element={<RedemptionProviderPage />}
             /> */}
-          {/* </Route> */}
-          <Route path="/docs" element={<></>} />
-          <Route path="/auction" element={<DutchAuctionPage />} />
-        </Routes>
+            {/* </Route> */}
+            <Route path="/docs" element={<></>} />
+            <Route path="/auction" element={<DutchAuctionPage />} />
+          </Routes>
+        </div>
       </Router>
       <ToastContainer />
     </>
