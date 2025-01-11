@@ -47,21 +47,23 @@ const Navbar: React.FC<{}> = () => {
         >
           <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-7 md:mt-0 md:border-0">
             {navLinks.map(({ path, label }) => (
-              <li key={path}>
-                <motion.div
-                  whileTap={{ scale: 0.95, backgroundColor: "#1e3a8a" }} // Animation on tap
-                  transition={{ type: "spring", stiffness: 100 }}
-                  className="rounded md:rounded-full px-2 py-1"
+              <li key={path} className="relative">
+                <Link
+                  to={path}
+                  className={`block py-2 px-3 md:p-0 rounded transition-all duration-300 ${
+                    isActive(path) ? "text-lightBlue" : "text-accent"
+                  } hover:text-blue-500`}
                 >
-                  <Link
-                    to={path}
-                    className={`block py-2 px-3 md:p-0 rounded ${
-                      isActive(path) ? "text-blue-500" : "text-accent"
-                    } hover:bg-gray-700 md:hover:bg-transparent md:hover:text-blue-500 dark:hover:text-white md:dark:hover:bg-transparent`}
-                  >
-                    {label}
-                  </Link>
-                </motion.div>
+                  {label}
+                </Link>
+                {isActive(path) && (
+                  <motion.div
+                    layoutId="underline"
+                    className="absolute -bottom-2 left-0 right-0 h-1  bg-lightBlue rounded-full w-1/2 mx-auto"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 500, damping: 30, duration: 1 }}
+                  />
+                )}
               </li>
             ))}
           </ul>

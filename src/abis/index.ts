@@ -231,6 +231,7 @@ export const anchorEngineAbi = [
       { name: 'provider', internalType: 'address', type: 'address' },
       { name: 'onBehalfOf', internalType: 'address', type: 'address' },
       { name: 'debtToOffset', internalType: 'uint256', type: 'uint256' },
+      { name: 'minEthOut', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'liquidatePosition',
     outputs: [],

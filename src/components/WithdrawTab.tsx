@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import StatsDisplay from "./StatsDisplay";
 import { formatNumber } from "../utils/formatNumber";
 import ErrorDisplay from "./ErrorDisplay";
+import { useAccount } from "wagmi";
 
 const WithdrawTab: React.FC<{}> = () => {
   const [withdrawAmount, setWithdrawAmount] = useState<string | "">("");
@@ -22,7 +23,8 @@ const WithdrawTab: React.FC<{}> = () => {
   const [isExecuting, setIsExecuting] = useState(false);
 
   const { ethPriceInUsd } = useEthPriceInUsd();
-  const { debtAmount, collateralAmount, fetchUserPosition } = useUserPosition();
+  const { address } = useAccount();
+  const { debtAmount, collateralAmount, fetchUserPosition } = useUserPosition(address!);
 
   const { withdraw } = useWithdraw();
 

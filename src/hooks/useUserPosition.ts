@@ -11,14 +11,13 @@ interface UseUserPositionReturnType {
 }
 
 export const useUserPosition = (
-  userAddress?: Address
+  userAddress: Address
 ): UseUserPositionReturnType => {
   const { anchorEngineAddress } = useContractAddress();
-  const { address } = useAccount();
 
   const { data: userPosition, refetch } = useReadAnchorEngineUserPositions({
     address: anchorEngineAddress,
-    args: [userAddress || (address as Address)],
+    args: [userAddress as Address],
   });
 
   // Function to fetch user position
@@ -32,10 +31,10 @@ export const useUserPosition = (
 
   // Initial fetch when the address or anchorEngineAddress changes
   useEffect(() => {
-    if (anchorEngineAddress && address) {
+    if (anchorEngineAddress && userAddress) {
       fetchUserPosition();
     }
-  }, [anchorEngineAddress, userAddress, address, refetch]);
+  }, [anchorEngineAddress, userAddress, refetch]);
 
   // Event listeners for contract events to update user position
   // useWatchAnchorEngineDepositEtherEvent({

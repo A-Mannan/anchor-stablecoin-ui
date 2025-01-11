@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import LabeledNumberInput from "./LabeledNumberInput";
 import AnimatedButton from "./AnimatedButton";
 import StatsDisplay from "./StatsDisplay";
+import SlippageInput from "./SlippageInput";
 import { useEthPriceInUsd } from "../hooks/useEthPriceInUsd";
 import { Address, formatUnits, parseUnits } from "viem";
 import { useDebounce } from "use-debounce";
@@ -10,7 +11,7 @@ import { gql, useQuery } from "urql";
 import { RedemptionProvider } from "../types";
 import {
   calculateAmountWithSlippage,
-  calculateEthOut,
+  calculateEthOutOnRedemption,
   calculateRedemptionFees,
 } from "../utils/redemption";
 import { useUserBalance } from "../hooks/useUserBalance";
@@ -37,7 +38,7 @@ const RedeemTab: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState(false);
 
   const [slippage, setSlippage] = useState<number>(0);
-  const [slippageInput, setSlippageInput] = useState<string>("0");
+  // const [slippageInput, setSlippageInput] = useState<string>("0");
   const [error, setError] = useState<string | null>(null);
 
   const { ethPriceInUsd } = useEthPriceInUsd();
@@ -60,30 +61,30 @@ const RedeemTab: React.FC = () => {
     if (error) setError(null);
   };
 
-  const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+  // const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const inputValue = e.target.value;
 
-    // Validate input to allow only numbers, decimal points, and empty values
-    if (inputValue === "" || /^-?\d*\.?\d*$/.test(inputValue)) {
-      setSlippageInput(inputValue); // Update raw input state
+  //   // Validate input to allow only numbers, decimal points, and empty values
+  //   if (inputValue === "" || /^-?\d*\.?\d*$/.test(inputValue)) {
+  //     setSlippageInput(inputValue); // Update raw input state
 
-      // Parse input to a number and update slippage if valid
-      const parsedValue = parseFloat(inputValue);
-      if (!isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
-        setSlippage(parsedValue);
-      }
-    }
-  };
+  //     // Parse input to a number and update slippage if valid
+  //     const parsedValue = parseFloat(inputValue);
+  //     if (!isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
+  //       setSlippage(parsedValue);
+  //     }
+  //   }
+  // };
 
-  const handleSliderChange = (value: number) => {
-    setSlippage(value);
-    setSlippageInput(value.toString()); // Keep raw input in sync with slider
-  };
+  // const handleSliderChange = (value: number) => {
+  //   setSlippage(value);
+  //   setSlippageInput(value.toString()); // Keep raw input in sync with slider
+  // };
 
-  const handlePresetClick = (preset: number) => {
-    setSlippage(preset);
-    setSlippageInput(preset.toString()); // Update raw input for the selected preset
-  };
+  // const handlePresetClick = (preset: number) => {
+  //   setSlippage(preset);
+  //   setSlippageInput(preset.toString()); // Update raw input for the selected preset
+  // };
 
   // Calculate total redemption amount
   const totalRedemptionAmount = data?.borrowers
@@ -99,7 +100,7 @@ const RedeemTab: React.FC = () => {
 
   const ethOutAmount =
     redeemAmountInUnits && data?.borrowers && ethPriceInUsd
-      ? calculateEthOut(data?.borrowers, redeemAmountInUnits, ethPriceInUsd)
+      ? calculateEthOutOnRedemption(data?.borrowers, redeemAmountInUnits, ethPriceInUsd)
       : 0n;
 
   useEffect(() => {
@@ -180,54 +181,11 @@ const RedeemTab: React.FC = () => {
           setValue={handleRedeemChange}
           description="Redeem AnchorUSD"
           id="redeem"
+          isDisabled={isExecuting}
         />
 
         {/* Slippage Section */}
-        <div className="flex flex-col border border-accent rounded-lg py-3 px-4 relative sm:w-11/12 mx-auto gap-1">
-          <span className="text-xs text-accent absolute -top-2 bg-secondary px-2">
-            Slippage Tolerance
-          </span>
-
-          {/* Slider and Input */}
-          <div className="flex items-center gap-4">
-            {/* Slider */}
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={0.01} // Allows decimal values
-              value={slippage}
-              onChange={(e) => handleSliderChange(Number(e.target.value))}
-              className="w-full h-1 cursor-pointer"
-            />
-
-            {/* Input Field */}
-            <input
-              type="text"
-              value={slippageInput} // Use raw input value
-              onChange={handleSlippageChange}
-              className="w-14 p-1 border border-accent rounded-md text-center text-accent bg-secondary focus:outline-none"
-            />
-            <span className="text-lg text-accent">%</span>
-          </div>
-
-          {/* Preset Buttons */}
-          <div className="flex gap-2">
-            {[0, 25, 50, 75, 100].map((preset) => (
-              <button
-                key={preset}
-                onClick={() => handlePresetClick(preset)}
-                className={`rounded-md text-xs w-14 h-7 flex justify-center items-center ${
-                  slippage === preset
-                    ? "bg-accent text-primary"
-                    : "bg-primary text-accent"
-                } transition-all duration-200`}
-              >
-                {preset}%
-              </button>
-            ))}
-          </div>
-        </div>
+        <SlippageInput slippage={slippage} setSlippage={setSlippage} />
 
         <ErrorDisplay error={error} />
 

@@ -68,7 +68,7 @@ const UserPositions: React.FC = () => {
   }, [data, ethPriceInUsd]);
 
   return (
-    <div className="flex flex-col items-center justify-start h-fit">
+    <div className="flex flex-col items-center justify-start flex-grow pt-12 h-full">
       <h1 className="text-3xl font-semibold text-accent mb-8 text-center">
         Borrowers' Positions
       </h1>

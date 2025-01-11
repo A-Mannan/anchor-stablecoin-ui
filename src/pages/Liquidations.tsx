@@ -1,42 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { gql, useQuery } from "urql";
+import { useEthPriceInUsd } from "../hooks/useEthPriceInUsd";
+import { formatUnits } from "viem";
 
-// Define the Borrower type according to the subgraph schema
-interface Borrower {
+interface SubgraphBorrower {
   id: string;
-  debt: number;
-  collateral: number;
+  debt: string;
+  collateral: string;
+  collateralRatio: string;
 }
 
-// Dummy data to simulate fetching from the subgraph
-const dummyBorrowers: Borrower[] = [
-  {
-    id: "0x1234567890abcdef1234567890abcdef12345678",
-    debt: 5000,
-    collateral: 15000,
-  },
-  {
-    id: "0xabcdef1234567890abcdef1234567890abcdef12",
-    debt: 3000,
-    collateral: 10000,
-  },
-  {
-    id: "0x7890abcdef1234567890abcdef1234567890abcd",
-    debt: 7000,
-    collateral: 20000,
-  },
-];
-
 const LiquidationPage: React.FC = () => {
-  const [borrowers, setBorrowers] = useState<Borrower[]>([]);
+  const { ethPriceInUsd } = useEthPriceInUsd(); // Fetch ETH price in USD
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setBorrowers(dummyBorrowers);
-  }, []);
+  // Once ETH price is fetched, construct the query
+  const liquidationThreshold = ethPriceInUsd
+    ? 1.2 / Number(formatUnits(ethPriceInUsd, 18))
+    : 0;
+
+  const GET_BORROWERS = gql`
+    query GetBorrowers($threshold: BigDecimal!) {
+      borrowers(where: { collateralRatio_lt: $threshold }) {
+        id
+        debt
+        collateral
+      }
+    }
+  `;
+
+  const [result] = useQuery({
+    query: GET_BORROWERS,
+    variables: { threshold: liquidationThreshold },
+    pause: !ethPriceInUsd, // Only execute query after ETH price is fetched
+  });
+
+  const { data, fetching, error } = result;
+
+  if (fetching) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full">
+    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full h-full">
       <div className="self-start p-6">
         <button
           onClick={() => navigate(-1)}
@@ -54,11 +60,11 @@ const LiquidationPage: React.FC = () => {
         <div className="grid grid-cols-3 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
           <div>Address</div>
           <div>Debt (USD)</div>
-          <div>Collateral (USD)</div>
+          <div>Collateral (ETH)</div>
         </div>
 
-        {borrowers.length > 0 ? (
-          borrowers.map((borrower) => (
+        {data && data.borrowers.length > 0 ? (
+          data.borrowers.map((borrower: SubgraphBorrower) => (
             <Link
               key={borrower.id}
               className="group relative grid grid-cols-3 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 overflow-hidden cursor-pointer"
@@ -71,10 +77,10 @@ const LiquidationPage: React.FC = () => {
                 {borrower.id}
               </div>
               <div className="relative text-red-500 text-center text-sm font-semibold group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
-                ${borrower.debt.toLocaleString()}
+                ${formatUnits(BigInt(borrower.debt), 18)}
               </div>
               <div className="relative text-green-500 text-center text-sm font-semibold group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
-                ${borrower.collateral.toLocaleString()}
+                {formatUnits(BigInt(borrower.collateral), 18)} ETH
               </div>
             </Link>
           ))

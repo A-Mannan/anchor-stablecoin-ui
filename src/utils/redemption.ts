@@ -36,7 +36,7 @@ export const calculateRedemptionFees = (
   };
 };
 
-export const calculateEthOut = (
+export const calculateEthOutOnRedemption = (
   borrowers: RedemptionProvider[],
   redeemAmount: bigint, // In wei
   ethPrice: bigint // In wei

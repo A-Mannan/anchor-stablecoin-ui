@@ -15,6 +15,7 @@ import { useDebounce } from "use-debounce";
 import { toast } from "react-toastify";
 import { formatNumber } from "../utils/formatNumber";
 import ErrorDisplay from "./ErrorDisplay";
+import { useAccount } from "wagmi";
 
 const DepositAndMintTab: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<string>("");
@@ -26,7 +27,8 @@ const DepositAndMintTab: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState(false);
 
   const { ethPriceInUsd } = useEthPriceInUsd();
-  const { debtAmount, collateralAmount, fetchUserPosition } = useUserPosition();
+  const { address } = useAccount();
+  const { debtAmount, collateralAmount, fetchUserPosition } = useUserPosition(address!);
   const { ethBalance, fetchEthBalance } = useUserBalance();
 
   const { depositAndMint, mint } = useDepositAndMint();

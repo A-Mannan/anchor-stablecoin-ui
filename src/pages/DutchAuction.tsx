@@ -64,6 +64,13 @@ const DutchAuctionPage: React.FC = () => {
     30n * 60n - (timeSinceRebase % (30n * 60n));
 
   useEffect(() => {
+    // Reset inputs after the transaction is executed
+    if (!isExecuting) {
+      setBuyAmount("");
+    }
+  }, [isExecuting]);
+
+  useEffect(() => {
     const setupCountdown = async () => {
       try {
         // Initial setup

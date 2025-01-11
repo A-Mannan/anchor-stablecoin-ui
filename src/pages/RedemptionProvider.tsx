@@ -1,49 +1,68 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import AnimatedButton from "../components/AnimatedButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { gql, useQuery } from "urql";
+import { formatUnits } from "viem";
+import { formatNumber } from "../utils/formatNumber";
 
-// Define the Borrower type according to the subgraph schema
-interface Borrower {
+// GraphQL query to fetch redemption provider data
+const REDEMPTION_PROVIDERS_QUERY = gql`
+  query {
+    borrowers(
+      where: {isRedemptionProvider: true}
+      orderBy: redemptionFeeRate
+    ) {
+      id
+      redemptionFeeRate
+      redemptionAmount
+    }
+}
+`;
+
+// Define the RedemptionProvider type according to the subgraph schema
+interface SubgraphRedemptionProvider {
   id: string;
-  debt: number;
-  collateral: number;
+  redemptionFeeRate: string;
+  redemptionAmount: string;
 }
 
-// Dummy data to simulate fetching from the subgraph
-const dummyBorrowers: Borrower[] = [
-  {
-    id: "0x1234567890abcdef1234567890abcdef12345678",
-    debt: 5000,
-    collateral: 15000,
-  },
-  {
-    id: "0xabcdef1234567890abcdef1234567890abcdef12",
-    debt: 3000,
-    collateral: 10000,
-  },
-  {
-    id: "0x7890abcdef1234567890abcdef1234567890abcd",
-    debt: 7000,
-    collateral: 20000,
-  },
-];
+interface RedemptionProvider {
+  id: string;
+  redemptionFeeRate: string;
+  redemptionAmount: string;
+}
 
 const RedemptionProviderPage: React.FC = () => {
-  const [borrowers, setBorrowers] = useState<Borrower[]>([]);
+  const [providers, setProviders] = useState<RedemptionProvider[]>([]);
+  const [result] = useQuery({
+    query: REDEMPTION_PROVIDERS_QUERY,
+  });
+
+  const { data, fetching, error } = result;
   const navigate = useNavigate();
 
   useEffect(() => {
-    setBorrowers(dummyBorrowers);
-  }, []);
+    if (data?.borrowers) {
+      const transformedProviders = data.borrowers.map(
+        (provider: SubgraphRedemptionProvider) => ({
+          id: provider.id,
+          redemptionFeeRate: formatUnits(BigInt(provider.redemptionFeeRate), 2),
+          redemptionAmount: formatUnits(BigInt(provider.redemptionAmount), 18),
+        })
+      );
 
+      setProviders(transformedProviders);
+    }
+  }, [data]);
+
+  // if (fetching) return <p>Loading...</p>;
+  // if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full">
-       {/* Back Button */}
-       <div className="self-start p-6">
+    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full pt-6 h-full">
+      {/* Back Button */}
+      <div className="self-start p-6">
         <button
-          onClick={() => navigate(-1)} // Navigate back to the previous page
+          onClick={() => navigate(-1)}
           className="text-lightBlue transition-all duration-300 border border-lightBlue hover:text-primary hover:bg-lightBlue rounded-lg px-4 py-2"
         >
           &larr; Back
@@ -84,25 +103,25 @@ const RedemptionProviderPage: React.FC = () => {
 
       <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8">
         <div className="grid grid-cols-3 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
-          <div>Address</div>
-          <div>Debt (USD)</div>
-          <div>Collateral (USD)</div>
+          <div>Provider Address</div>
+          <div>Fee Rate</div>
+          <div>Redemption Amount (USD)</div>
         </div>
 
-        {borrowers.length > 0 ? (
-          borrowers.map((borrower) => (
+        {providers.length > 0 ? (
+          providers.map((provider) => (
             <div
-              key={borrower.id}
+              key={provider.id}
               className="grid grid-cols-3 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 hover:bg-primary hover:shadow-2xl transition-all duration-300 ease-in-out"
             >
               <div className="text-accent truncate text-center text-sm font-medium">
-                {borrower.id}
+                {provider.id}
               </div>
               <div className="text-red-500 text-center text-sm font-semibold">
-                ${borrower.debt.toLocaleString()}
+                {formatNumber(provider.redemptionFeeRate)}%
               </div>
               <div className="text-green-500 text-center text-sm font-semibold">
-                ${borrower.collateral.toLocaleString()}
+                ${formatNumber(provider.redemptionAmount)}
               </div>
             </div>
           ))

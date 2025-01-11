@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LabeledNumberInput from "../components/LabeledNumberInput";
 import AnimatedButton from "../components/AnimatedButton";
@@ -12,6 +12,7 @@ import { useProviderRedemptionOffer } from "../hooks/useProviderRedemptionOffer"
 import { useDebounce } from "use-debounce";
 import { useRedemptionOfferRegistration } from "../hooks/useRedemptionOfferRegistration";
 import { toast } from "react-toastify";
+import { useAccount } from "wagmi";
 
 const ManageRedemptionPage: React.FC = () => {
   const [newRedemptionAmount, setNewRedemptionAmount] = useState<string>("");
@@ -29,7 +30,8 @@ const ManageRedemptionPage: React.FC = () => {
     useReadAnchorEngineMaxRedemptionFeeRate({
       address: anchorEngineAddress,
     });
-  const { debtAmount } = useUserPosition();
+    const { address } = useAccount();
+  const { debtAmount } = useUserPosition(address!);
   const { redemptionAmount, feeRate, fetchProviderRedemptionOffer } =
     useProviderRedemptionOffer();
 
@@ -130,6 +132,14 @@ const ManageRedemptionPage: React.FC = () => {
     }
     setIsExecuting(false);
   };
+
+  useEffect(() => {
+    // Reset inputs after the transaction is executed
+    if (!isExecuting) {
+      setNewRedemptionAmount("");
+      setNewFeeRate("");
+    }
+  }, [isExecuting]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen max-w-5xl mx-auto w-full overflow-hidden">
