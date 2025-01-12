@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "urql";
 import { useEthPriceInUsd } from "../hooks/useEthPriceInUsd";
 import { formatUnits } from "viem";
+import { calculateCollateralRatio } from "../utils/collateralRatio";
+import { formatNumber } from "../utils/formatNumber";
 
 interface SubgraphBorrower {
   id: string;
@@ -38,9 +40,6 @@ const LiquidationPage: React.FC = () => {
 
   const { data, fetching, error } = result;
 
-  if (fetching) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-
   return (
     <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full h-full">
       <div className="self-start p-6">
@@ -57,17 +56,18 @@ const LiquidationPage: React.FC = () => {
       </h1>
 
       <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8">
-        <div className="grid grid-cols-3 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
+        <div className="grid grid-cols-4 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
           <div>Address</div>
           <div>Debt (USD)</div>
           <div>Collateral (ETH)</div>
+          <div>Collateral Ratio</div>
         </div>
 
         {data && data.borrowers.length > 0 ? (
           data.borrowers.map((borrower: SubgraphBorrower) => (
             <Link
               key={borrower.id}
-              className="group relative grid grid-cols-3 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 overflow-hidden cursor-pointer"
+              className="group relative grid grid-cols-4 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 overflow-hidden cursor-pointer"
               to={`/earn/liquidation/${borrower.id}`}
             >
               <span className="absolute inset-0 flex items-center justify-center bg-primary/80 text-white text-lg font-bold duration-300 -translate-x-full group-hover:translate-x-0 ease">
@@ -82,11 +82,22 @@ const LiquidationPage: React.FC = () => {
               <div className="relative text-green-500 text-center text-sm font-semibold group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
                 {formatUnits(BigInt(borrower.collateral), 18)} ETH
               </div>
+              <div className="relative text-blue-500 text-center text-sm font-semibold group-hover:opacity-0 transition-opacity duration-300 ease-in-out">
+                {formatNumber(formatUnits(
+                  calculateCollateralRatio(
+                    BigInt(borrower.collateral),
+                    BigInt(borrower.debt),
+                    ethPriceInUsd
+                  ),
+                  18
+                ))}
+                %
+              </div>
             </Link>
           ))
         ) : (
           <div className="text-center py-6 text-gray-300 text-lg">
-            No Positions opened
+            No Positions to liquidate
           </div>
         )}
       </div>

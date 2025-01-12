@@ -4,21 +4,19 @@ import { gql, useQuery } from "urql";
 import { formatUnits } from "viem";
 import { formatNumber } from "../utils/formatNumber";
 
-// GraphQL query to fetch redemption provider data
 const REDEMPTION_PROVIDERS_QUERY = gql`
   query {
     borrowers(
-      where: {isRedemptionProvider: true}
+      where: { isRedemptionProvider: true }
       orderBy: redemptionFeeRate
     ) {
       id
       redemptionFeeRate
       redemptionAmount
     }
-}
+  }
 `;
 
-// Define the RedemptionProvider type according to the subgraph schema
 interface SubgraphRedemptionProvider {
   id: string;
   redemptionFeeRate: string;
@@ -37,7 +35,7 @@ const RedemptionProviderPage: React.FC = () => {
     query: REDEMPTION_PROVIDERS_QUERY,
   });
 
-  const { data, fetching, error } = result;
+  const { data } = result;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,11 +52,8 @@ const RedemptionProviderPage: React.FC = () => {
     }
   }, [data]);
 
-  // if (fetching) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error.message}</p>;
-
   return (
-    <div className="flex flex-col items-center justify-start max-w-5xl mx-auto w-full pt-6 h-full">
+    <div className="flex flex-col items-center justify-start w-full pt-6 h-full overflow-auto">
       {/* Back Button */}
       <div className="self-start p-6">
         <button
@@ -69,7 +64,7 @@ const RedemptionProviderPage: React.FC = () => {
         </button>
       </div>
 
-      <h1 className="text-3xl font-semibold text-accent mb-8 text-center">
+      <h1 className="text-2xl md:text-3xl font-semibold text-accent mb-8 text-center">
         Redemption Providers
       </h1>
 
@@ -101,19 +96,23 @@ const RedemptionProviderPage: React.FC = () => {
         </Link>
       </div>
 
-      <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8">
-        <div className="grid grid-cols-3 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
+      <div className="max-w-4xl w-full bg-secondary shadow-xl rounded-xl p-8 text-sm md:text-base">
+        <div className="grid grid-cols-4 text-primary text-center p-4 bg-lightBlue/80 backdrop-blur-md rounded-lg mb-4 font-semibold">
+          <div>Rank</div>
           <div>Provider Address</div>
           <div>Fee Rate</div>
           <div>Redemption Amount (USD)</div>
         </div>
 
         {providers.length > 0 ? (
-          providers.map((provider) => (
+          providers.map((provider, index) => (
             <div
               key={provider.id}
-              className="grid grid-cols-3 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 hover:bg-primary hover:shadow-2xl transition-all duration-300 ease-in-out"
+              className="grid grid-cols-4 justify-between items-center bg-primary/60 backdrop-blur-lg shadow-lg rounded-lg p-4 mb-4 hover:bg-primary hover:shadow-2xl transition-all duration-300 ease-in-out"
             >
+              <div className="text-accent text-center text-sm font-medium">
+                {index + 1}
+              </div>
               <div className="text-accent truncate text-center text-sm font-medium">
                 {provider.id}
               </div>

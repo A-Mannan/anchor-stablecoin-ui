@@ -10,7 +10,7 @@ interface AnimatedButtonProps {
 const AnimatedButton: React.FC<AnimatedButtonProps> = ({ onClick, children, isDisabled }) => {
   return (
     <motion.button
-      className="p-[3px] relative w-1/2 mx-auto self-end"
+      className="p-[3px] relative min-w-fit w-1/2 mx-auto self-end"
       whileTap={isDisabled ? {} : { scale: 0.9, transition: { duration: 0.1 } }}
       animate={{
         scale: [0.9, 1.02, 1], // Scale sequence

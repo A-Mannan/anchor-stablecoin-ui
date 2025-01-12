@@ -16,7 +16,7 @@ const App: React.FC<{}> = () => {
   return (
     <>
       <Router>
-        <div className="flex flex-col justify-center gap-5 h-screen w-screen">
+        <div className="flex flex-col justify-center md:h-screen md:w-screen">
           <Layout />
           <Routes>
             <Route path="/" element={<Position />} />

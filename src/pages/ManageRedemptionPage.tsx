@@ -154,7 +154,7 @@ const ManageRedemptionPage: React.FC = () => {
       </div>
 
       {/* Container for the rounded box */}
-      <div className="bg-secondary shadow-lg rounded-3xl w-7/12">
+      <div className="bg-secondary shadow-lg rounded-3xl w-11/12 md:w-7/12">
         {/* Title */}
         <div className="flex flex-col justify-around items-center p-6 gap-4">
           <h2 className="text-2xl font-semibold text-accent text-center mb-4">

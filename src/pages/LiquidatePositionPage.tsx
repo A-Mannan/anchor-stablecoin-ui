@@ -153,7 +153,7 @@ const LiquidatePositionPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen max-w-5xl mx-auto w-full overflow-hidden">
+    <div className="flex flex-col justify-center items-center h-screen max-w-5xl mx-auto w-full overflow-hidden gap-4 md:gap-0">
       {/* Back Button */}
       <div className="self-start px-6">
         <button
@@ -165,7 +165,7 @@ const LiquidatePositionPage: React.FC = () => {
       </div>
 
       {/* Container for the rounded box */}
-      <div className="bg-secondary shadow-lg rounded-3xl w-7/12">
+      <div className="bg-secondary shadow-lg rounded-3xl w-11/12 md:w-7/12 min-w-fit">
         {/* Title */}
         <div className="flex flex-col justify-around items-center p-6 gap-4">
           <h2 className="text-2xl font-semibold text-accent text-center mb-4">

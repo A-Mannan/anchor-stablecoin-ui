@@ -1,14 +1,14 @@
-import React from "react";
 import { CardBody, CardContainer, CardItem } from "./3dCard";
 import { Link } from "react-router-dom";
 import LiqImg from "../assets/liquidation.webp";
 
-interface CustomCardProps {
+export interface CustomCardProps {
   name: string;
   path: string;
+  description: string;
 }
 
-export function CustomCard({ name, path }: CustomCardProps) {
+export function CustomCard({ name, path, description }: CustomCardProps) {
   return (
     <CardContainer className="inter-var">
       <CardBody className="relative group/card hover:shadow-xl hover:shadow-emerald-500/[0.1] bg-secondary border-accent/[0.5] w-[24rem] h-[27rem] rounded-lg p-4 border flex flex-col justify-center gap-2">
@@ -18,13 +18,7 @@ export function CustomCard({ name, path }: CustomCardProps) {
         >
           {name}
         </CardItem>
-        <CardItem
-          as="p"
-          translateZ="60"
-          className="text-sm max-w-xs mt-2 text-accent text-center"
-        >
-          Hover over this card to unleash the power of CSS perspective
-        </CardItem>
+        
         <CardItem translateZ="100" className="w-full mt-4">
           <img
             src={LiqImg}
@@ -35,12 +29,18 @@ export function CustomCard({ name, path }: CustomCardProps) {
             alt="thumbnail"
           />
         </CardItem>
+        <CardItem
+          as="p"
+          translateZ="60"
+          className="text-sm max-w-xs mt-2 text-accent text-center"
+        >
+        {description}
+        </CardItem>
         <div className="flex justify-center items-center mt-10">
           <CardItem
             translateZ={20}
             as={Link}
             to={path}
-            // target="__blank"
             className="px-6 py-3 rounded-lg text-xs font-normal text-primary bg-lightBlue"
           >
             Earn now →

@@ -14,19 +14,22 @@ const Navbar: React.FC<{}> = () => {
     { path: "/position", label: "All Positions" },
     { path: "/auction", label: "Dutch Auction" },
     { path: "/earn", label: "Earn" },
-    { path: "/docs", label: "Docs" },
+    {
+      path: "https://anchorstablecoin.gitbook.io/anchor/background/stablecoins-on-the-market",
+      label: "Docs",
+    },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="p-5">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 fixed top-0 left-0 right-0">
+    <nav className="">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
         <Link to="/" className="flex items-center space-x-3">
           <Logo />
         </Link>
         <div className="flex md:order-2 space-x-3">
-          <div className="text-xs">
+          <div className="text-xs ">
             <ConnectButton />
           </div>
           <button
@@ -45,23 +48,28 @@ const Navbar: React.FC<{}> = () => {
           }`}
           id="navbar-cta"
         >
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-7 md:mt-0 md:border-0">
+          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 rounded-lg bg-primary md:gap-3 md:bg-transparent border  border-accent md:border-transparent md:flex-row md:space-x-7 md:mt-0 md:border-0">
             {navLinks.map(({ path, label }) => (
               <li key={path} className="relative">
                 <Link
                   to={path}
                   className={`block py-2 px-3 md:p-0 rounded transition-all duration-300 ${
                     isActive(path) ? "text-lightBlue" : "text-accent"
-                  } hover:text-blue-500`}
+                  } hover:text-lightBlue`}
                 >
                   {label}
                 </Link>
                 {isActive(path) && (
                   <motion.div
                     layoutId="underline"
-                    className="absolute -bottom-2 left-0 right-0 h-1  bg-lightBlue rounded-full w-1/2 mx-auto"
+                    className="absolute -bottom-2 left-0 right-0 h-0.5 md:bg-lightBlue rounded-full w-1/2 mx-auto"
                     initial={false}
-                    transition={{ type: "spring", stiffness: 500, damping: 30, duration: 1 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30,
+                      duration: 1,
+                    }}
                   />
                 )}
               </li>

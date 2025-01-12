@@ -30,7 +30,7 @@ const SlippageInput: React.FC<SlippageInputProps> = ({ slippage, setSlippage }) 
   };
 
   return (
-    <div className="flex flex-col border border-accent rounded-lg py-3 px-4 relative sm:w-11/12 mx-auto gap-1">
+    <div className="flex flex-col border border-accent rounded-lg py-3 px-4 relative sm:w-11/12 mx-auto md:gap-1">
       <span className="text-xs text-accent absolute -top-2 bg-secondary px-2">
         Slippage Tolerance
       </span>
@@ -57,7 +57,7 @@ const SlippageInput: React.FC<SlippageInputProps> = ({ slippage, setSlippage }) 
           <button
             key={preset}
             onClick={() => handlePresetClick(preset)}
-            className={`rounded-md text-xs w-14 h-7 flex justify-center items-center ${
+            className={`rounded-md text-xs w-10 h-5 md:w-14 md:h-7 flex justify-center items-center ${
               slippage === preset
                 ? "bg-accent text-primary"
                 : "bg-primary text-accent"

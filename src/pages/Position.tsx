@@ -46,7 +46,7 @@ const Position: React.FC<{}> = () => {
   ];
 
   return (
-    <div className="flex-grow [perspective:1000px] relative flex flex-col max-w-5xl mx-auto w-full items-start justify-start pt-10 h-screen">
+    <div className="flex-grow [perspective:1000px] relative flex flex-col max-w-5xl mx-auto w-full items-start justify-start pt-8 h-screen">
       <Tabs tabs={tabs} />
     </div>
   );

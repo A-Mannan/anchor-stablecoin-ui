@@ -10,7 +10,7 @@ export function calculateEthOutOnLiquidation(
     return 0n;
   }
   const ethAmount =
-    (debtPaymentAmount * parseUnits("1", 18)) / (ethPriceInUsd * 100n);
+    (debtPaymentAmount * parseUnits("1", 18)) / (ethPriceInUsd);
 
   if (collateralRatio > parseUnits("100", 18)) {
     return (ethAmount * collateralRatio) / parseUnits("100", 18);
